@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="1e2dcfa2-cfa8-45ca-96f5-86371c304e74" file="config.yaml" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="19d696da-7262-49fa-849a-a242ee084e4f" basePath="${systemApi.basepath}" >
+		<http:request-connection host="${systemApi.host}" port="${systemApi.port}" />
+	</http:request-config>
+</mule>
