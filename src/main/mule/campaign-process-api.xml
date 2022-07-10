@@ -3,7 +3,7 @@
     <http:listener-config name="campaign-process-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="campaign-process-api-config" api="resource::e9cbd57b-c837-47ec-92be-da9a4aa996dc:campaign-process-api:1.1.0:raml:zip:campaign-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="campaign-process-api-config" api="resource::e9cbd57b-c837-47ec-92be-da9a4aa996dc:campaign-process-api:1.2.0:raml:zip:campaign-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="campaign-process-api-main">
         <http:listener config-ref="campaign-process-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
