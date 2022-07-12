@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 	<flow name="generateFlow" doc:id="b88a8076-634e-4e8c-9d4b-aebb3bbb1312" >
 		<http:listener doc:name="POST /generate" doc:id="b13ecbef-b650-484b-88dd-311d7b257f82" config-ref="campaign-process-api-httpListenerConfig" path="/generate" allowedMethods="POST"/>
 		<set-variable value="#[payload as String as Number]" doc:name="count" doc:id="d7c71821-dafe-4bee-8295-6bcaf57a23ee" variableName="count"/>
@@ -21,10 +22,10 @@ output application/json
 	---
 	{
 		gamemaster: {
-			name: generateName(),
-			characters: characters,
-			campaigns: generateCampaigns(randomInt(5) + 1, characters)
-		}
+			name: generateName()},
+		characters: characters,
+		campaigns: generateCampaigns(randomInt(5) + 1, characters)
+		
 	}
 }]]></ee:set-payload>
 			</ee:message>

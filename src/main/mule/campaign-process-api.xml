@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:campaign-system-api="http://www.mulesoft.org/schema/mule/campaign-system-api" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/campaign-system-api http://www.mulesoft.org/schema/mule/campaign-system-api/current/mule-campaign-system-api.xsd http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
     <http:listener-config name="campaign-process-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="campaign-process-api-config" api="resource::e9cbd57b-c837-47ec-92be-da9a4aa996dc:campaign-process-api:1.2.0:raml:zip:campaign-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="campaign-process-api-config" api="resource::e9cbd57b-c837-47ec-92be-da9a4aa996dc:campaign-process-api:1.2.1:raml:zip:campaign-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="campaign-process-api-main">
         <http:listener config-ref="campaign-process-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -124,6 +124,27 @@ output application/json
         </error-handler>
     </flow>
     <flow name="post:\batch\import:application\json:campaign-process-api-config">
+        <batch:job jobName="campaign-process-apiBatch_Job" doc:id="b72b2121-8745-4e04-a6b8-d1caa2e3d65a">
+            <batch:process-records>
+                <batch:step name="Batch_Step" doc:id="62b7cea9-b000-4e9e-9dd1-251e523975eb">
+					<campaign-system-api:post-a-game-master doc:name="Post a Game Master" doc:id="04797196-9a02-4b47-9ce9-c464e64fc40a" config-ref="Campaign_System_API_Config" target="postResult">
+                                <campaign-system-api:post-a-game-master-request-data><![CDATA[#[payload.gamemaster]]]></campaign-system-api:post-a-game-master-request-data>
+                            </campaign-system-api:post-a-game-master>
+                </batch:step>
+				<batch:step name="Batch_Step1" doc:id="24940ce9-015b-4e61-b530-87a58fd964a7" >
+					<foreach doc:name="For Each" doc:id="b664e389-0126-4281-aba1-d66b078ad9ac" collection="payload.characters">
+                                <campaign-system-api:post-a-character doc:name="Post a character" doc:id="2597d141-8ea7-4638-ba5c-e06d7a32567c" config-ref="Campaign_System_API_Config" target="postResult">
+                                </campaign-system-api:post-a-character>
+                            </foreach>
+				</batch:step>
+				<batch:step name="Batch_Step2" doc:id="6cb50ebd-4a1e-497c-b5b5-d37f94f9838b" >
+					<foreach doc:name="For Each" doc:id="a0b42132-6cef-4875-af9a-20ab5036f577" collection="payload.campaigns">
+                                <campaign-system-api:post-a-campaign doc:name="Post a campaign" doc:id="3d715738-bee2-4e9d-8068-30254cdc7961" config-ref="Campaign_System_API_Config" target="postResult">
+                                </campaign-system-api:post-a-campaign>
+                            </foreach>
+				</batch:step>
+            </batch:process-records>
+        </batch:job>
         <logger level="INFO" message="post:\batch\import:application\json:campaign-process-api-config" />
     </flow>
 </mule>
