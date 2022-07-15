@@ -35,11 +35,11 @@ fun generateCharacters(count) = (1 to count) map do {
 		wisdom: round((randomInt(level) + 6) * 0.8),
 		intelligence: round((randomInt(level) + 6) * 0.8),
 		charisma: round((randomInt(level) + 6) * 0.8),
-		armor_class: round((randomInt(level) + 6) * 0.8) as String
+		armor_class: round((randomInt(level) + 6) * 0.8)
 	}
 }
 
-fun generateCampaigns(count, characters) = (1 to count) map {}
+fun generateCampaigns(count, characters) = (1 to count) map {"name": "count"}
 
 fun roundN(num, places) =
 	num * (10 pow places) / (10 pow places)

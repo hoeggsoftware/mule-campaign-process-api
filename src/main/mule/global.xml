@@ -11,4 +11,7 @@ http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/
 		<http:request-connection host="${systemApi.host}" port="${systemApi.port}" />
 	</http:request-config>
 	<campaign-system-api:config name="Campaign_System_API_Config" doc:name="Campaign System API Config" doc:id="733a6088-5d46-4b07-943c-de2121f3c388" property_host="${systemApi.host}" property_port="${systemApi.port}" property_protocol="HTTP" property_basePath="${systemApi.basepath}" />
+	<http:request-config name="HTTP_Request_configuration_LOCAL" doc:name="HTTP Request configuration" doc:id="dcbefad7-5f0a-4793-8144-e73444e467df" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
 </mule>
