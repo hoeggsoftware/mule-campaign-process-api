@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:campaign-system-api="http://www.mulesoft.org/schema/mule/campaign-system-api" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/campaign-system-api http://www.mulesoft.org/schema/mule/campaign-system-api/current/mule-campaign-system-api.xsd http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:campaign-system-api="http://www.mulesoft.org/schema/mule/campaign-system-api" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/campaign-system-api http://www.mulesoft.org/schema/mule/campaign-system-api/current/mule-campaign-system-api.xsd http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
     <http:listener-config name="campaign-process-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="3001" />
     </http:listener-config>
@@ -123,72 +124,79 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="post:\batch\import:application\json:campaign-process-api-config">
-        <batch:job jobName="campaign-process-apiBatch_Job" doc:id="b72b2121-8745-4e04-a6b8-d1caa2e3d65a">
-            <batch:process-records>
-                <batch:step name="PostGameMaster" doc:id="62b7cea9-b000-4e9e-9dd1-251e523975eb">
-					<until-successful maxRetries="5" doc:name="Until Successful" doc:id="6e2fbfcb-9846-4574-adcb-8436874f8854" millisBetweenRetries="4000">
-						<try doc:name="Try" doc:id="c6b81a43-a742-49a4-8514-26aea10878ae" >
-							<campaign-system-api:post-a-game-master doc:name="Post a Game Master" doc:id="04797196-9a02-4b47-9ce9-c464e64fc40a" config-ref="Campaign_System_API_Config" target="postResult">
-                                <campaign-system-api:post-a-game-master-request-data><![CDATA[#[payload.gamemaster]]]></campaign-system-api:post-a-game-master-request-data>
-                            </campaign-system-api:post-a-game-master>
-							<error-handler >
-								<on-error-propagate enableNotifications="true" logException="true" doc:name="On Timeout - Propogate" doc:id="9860352a-076b-469d-b1b6-5ad8a7e68bfd" type="CAMPAIGN-SYSTEM-API:TIMEOUT">
-									<logger level="INFO" doc:name="Logger" doc:id="1437a94a-add6-4add-8cf5-2deb4b2ea8b0" message='#[{message: "Timeout occured while creating game master", error: error.description}]'/>
-								</on-error-propagate>
-								<on-error-propagate enableNotifications="true" logException="true" doc:name="On Server Error - Propogate" doc:id="1f8a860c-253d-4fdb-8548-8cd210337a04" type="CAMPAIGN-SYSTEM-API:INTERNAL_SERVER_ERROR">
-									<logger level="INFO" doc:name="Logger" doc:id="15453bcb-539a-4ace-a180-f9943dbcba92" message='#[{message: "Server error occurred while creating game master", error: error.description}]'/>
-								</on-error-propagate>
-							</error-handler>
+    <flow name="post:\batch\import:application\json:campaign-process-api-config" doc:id="72bab72d-52fa-4785-b6fd-fbd891f9c9c5">
+		<foreach doc:name="For Each" doc:id="5e97db25-97af-4c9b-af7b-a184a7b26153" collection="#[payload.gamemaster]">
+			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="7fcbf975-b0f9-49c2-ab29-368bad08510e" millisBetweenRetries="5000">
+				<try doc:name="Try" doc:id="4815f4d4-4b6f-4a50-81a5-d68370d34a82" >
+					<campaign-system-api:post-a-game-master doc:name="Post a Game Master" doc:id="ad184015-f965-45af-b83d-88ec130a05b4" config-ref="Campaign_System_API_Config" />
+					<error-handler >
+						<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="085aea12-e074-48b5-a89d-d7860e67e7c3" type="CAMPAIGN-SYSTEM-API:TIMEOUT" >
+							<logger level="INFO" doc:name="Logger" doc:id="265a0500-da67-4946-addc-9411f5d749ca" message='#[{"message":"timeout occurred while posting game master", "error": error.description }]' />
+						</on-error-propagate>
+						<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="6f666410-e295-44d0-85b1-3a829417dbe2" type="CAMPAIGN-SYSTEM-API:INTERNAL_SERVER_ERROR" >
+							<logger level="INFO" doc:name="Logger" doc:id="2f0044cf-68fc-4981-8e6b-c829ec9941a6" message='#[{"message":"internal server error occurred while posting character", "error": error.description }]' />
+						</on-error-propagate>
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b0e68353-f73c-4967-9e2d-d1eefdd4436c" type="CAMPAIGN-SYSTEM-API:SERVICE_UNAVAILABLE" >
+							<raise-error doc:name="Raise error" doc:id="3f98bac2-8b79-4c1d-bf0d-79bad7c56aa4" type="SYSTEM-API:SERVICE_UNAVAILABLE" />
+						</on-error-continue>
+					</error-handler>
+				</try>
+			</until-successful>
+		</foreach>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="668942a8-ef98-45a1-aa37-7da95e717080" >
+			<route>
+				<foreach doc:name="For Each" doc:id="ae8110ed-2a8c-47b0-9a69-4a5a1f742de7" collection="#[payload.characters]">
+					<parallel-foreach doc:name="Parallel For Each" doc:id="698bf244-10f4-40c2-8357-e2de90ae166d" collection="#[payload]">
+					<until-successful maxRetries="5" doc:name="Until Successful" doc:id="fd0a8ddb-a3e0-4e11-98c7-8ba00f6000a6" millisBetweenRetries="5000">
+							<try doc:name="Try" doc:id="63107b52-dd33-4dfa-acf5-04f7e53df3ba">
+						<campaign-system-api:post-a-character doc:name="Post a character" doc:id="f5dfb524-19e4-4a7a-ac01-264c1b89250c" config-ref="Campaign_System_API_Config" />
+						<error-handler>
+									<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="9e3b9e38-7686-4a95-b308-00c1393f2dcc" type="CAMPAIGN-SYSTEM-API:TIMEOUT">
+										<logger level="INFO" doc:name="Logger" doc:id="3f176425-94e4-468c-a69f-9ffd7f38377d" message='#[{"message":"timeout occurred while posting character", "error": error.description }]' />
+									</on-error-propagate>
+									<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="a1a6e05f-5bfc-4e02-93df-57f6a0dc79b1" type="CAMPAIGN-SYSTEM-API:INTERNAL_SERVER_ERROR">
+										<logger level="INFO" doc:name="Logger" doc:id="3ca1e535-280f-4737-8dd5-d04421d58ec0" message='#[{"message":"internal server error occurred while posting character", "error": error.description }]' />
+									</on-error-propagate>
+									<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6173b896-1c35-42a4-a58d-458574857095" type="CAMPAIGN-SYSTEM-API:SERVICE_UNAVAILABLE">
+										<raise-error doc:name="Raise error" doc:id="b7d9ebdf-fecd-4ffe-9f55-11b88ebc061f" type="SYSTEM-API:SERVICE_UNAVAILABLE" />
+									</on-error-continue>
+								</error-handler>
 						</try>
-					</until-successful>
-                </batch:step>
-				<batch:step name="PostCharacters" doc:id="24940ce9-015b-4e61-b530-87a58fd964a7" >
-					<foreach doc:name="For Each" doc:id="ebd5f902-fc1d-493c-8e6e-f010daf961c0" collection="payload.characters">
-						<until-successful maxRetries="5" doc:name="Until Successful" doc:id="50df9e3d-68b0-4f17-8962-83995c7a0e2b" millisBetweenRetries="4000">
-						<try doc:name="Try" doc:id="68b732c8-d2ef-4879-8e9d-2fa30a24eaa4">
-							<campaign-system-api:post-a-character doc:name="Post a character" doc:id="2597d141-8ea7-4638-ba5c-e06d7a32567c" config-ref="Campaign_System_API_Config" target="postResult">
-                                </campaign-system-api:post-a-character>
-							<error-handler>
-								<on-error-propagate enableNotifications="true" logException="true" doc:name="On Timeout - Propogate" doc:id="b75579fa-dbaa-4b66-b5dd-4d83b0dd5406" type="CAMPAIGN-SYSTEM-API:TIMEOUT">
-									<logger level="INFO" doc:name="Logger" doc:id="7c069205-c3e3-4892-bf8b-f34a5d6d5d45" message='#[{message: "Timeout occured while creating character", error: error.description}]' />
-								</on-error-propagate>
-								<on-error-propagate enableNotifications="true" logException="true" doc:name="On Server Error - Propogate" doc:id="cad5a13a-1039-4917-9f8d-3399239b6469" type="CAMPAIGN-SYSTEM-API:INTERNAL_SERVER_ERROR">
-									<logger level="INFO" doc:name="Logger" doc:id="15eb347e-5f01-4382-ba25-4dd5b79ecc2f" message='#[{message: "Server error occurred while creating character", error: error.description}]' />
-								</on-error-propagate>
-							</error-handler>
+						</until-successful>
+				</parallel-foreach>
+				</foreach>
+			</route>
+			<route>
+				<foreach doc:name="For Each" doc:id="47ae0cb3-b51f-47d6-84e3-94a6b18c7cec" collection="#[payload.campaigns]">
+					<parallel-foreach doc:name="Parallel For Each" doc:id="ce96182c-e85c-4dae-9b02-a72523f8b25a" collection="#[payload]">
+					<until-successful maxRetries="5" doc:name="Until Successful" doc:id="ec9e67e4-090b-4109-b4b1-fd04aebe90fa" millisBetweenRetries="5000">
+							<try doc:name="Try" doc:id="9f3e8f27-c501-4641-a605-86b9e3fe71ba">
+						<campaign-system-api:post-a-campaign doc:name="Post a campaign" doc:id="ac81ea47-61e9-40e4-a3ee-db4aa4671a6e" config-ref="Campaign_System_API_Config" />
+						<error-handler>
+									<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="ab41556b-56c7-46fc-859b-0f9c2940d28b" type="CAMPAIGN-SYSTEM-API:TIMEOUT">
+										<logger level="INFO" doc:name="Logger" doc:id="8feef836-7999-46c3-8d5a-22300da9e413" message='#[{"message":"timeout occurred while posting campaign", "error": error.description }]' />
+									</on-error-propagate>
+									<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="4c9d4879-6a9d-45cb-bd33-647d4d2bcfaa" type="CAMPAIGN-SYSTEM-API:INTERNAL_SERVER_ERROR">
+										<logger level="INFO" doc:name="Logger" doc:id="e79af0db-ae0f-4652-96a7-c7f855b93475" message='#[{"message":"internal server error occurred while posting campaign", "error": error.description }]' />
+									</on-error-propagate>
+									<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ed41a280-4297-4c64-b87e-0b4162007a1d" type="CAMPAIGN-SYSTEM-API:SERVICE_UNAVAILABLE">
+										<raise-error doc:name="Raise error" doc:id="9ca67ba0-56fb-4616-9806-25646761d796" type="SYSTEM-API:SERVICE_UNAVAILABLE" />
+									</on-error-continue>
+								</error-handler>
 						</try>
-					</until-successful>
-					</foreach>
-				</batch:step>
-				<batch:step name="PostCampaigns" doc:id="6cb50ebd-4a1e-497c-b5b5-d37f94f9838b" >
-					<foreach doc:name="For Each" doc:id="1f8b8cbc-dcc9-4ef8-9a55-9079389a5dab" collection="payload.campaigns">
-						<until-successful maxRetries="5" doc:name="Until Successful" doc:id="43ac755f-a425-42ca-b8fd-34dc4a961701" millisBetweenRetries="4000">
-						<try doc:name="Try" doc:id="bc617dcd-5457-40f0-be62-720c9f19985f">
-							<campaign-system-api:post-a-campaign doc:name="Post a campaign" doc:id="3d715738-bee2-4e9d-8068-30254cdc7961" config-ref="Campaign_System_API_Config" target="postResult">
-                                </campaign-system-api:post-a-campaign>
-							<error-handler>
-								<on-error-propagate enableNotifications="true" logException="true" doc:name="On Timeout - Propogate" doc:id="82f02faa-6baa-412e-bc3f-514b402c46d4" type="CAMPAIGN-SYSTEM-API:TIMEOUT">
-									<logger level="INFO" doc:name="Logger" doc:id="58a6c7d7-77a3-469a-8d1a-ce95a56abfd1" message='#[{message: "Timeout occured while creating campaign", error: error.description}]' />
-								</on-error-propagate>
-								<on-error-propagate enableNotifications="true" logException="true" doc:name="On Server Error - Propogate" doc:id="b58ec5ad-fa8b-47ab-8a33-af5fb29630fb" type="CAMPAIGN-SYSTEM-API:INTERNAL_SERVER_ERROR">
-									<logger level="INFO" doc:name="Logger" doc:id="fe2918d8-69bd-4c89-bc76-b2bee61618a9" message='#[{message: "Server error occurred while creating campaign", error: error.description}]' />
-								</on-error-propagate>
-							</error-handler>
-						</try>
-					</until-successful>
-					</foreach>
-				</batch:step>
-            </batch:process-records>
-        </batch:job>
-		<ee:transform doc:name="Transform Message" doc:id="d84900dd-fd4d-4e60-81f9-3e3a34beaac7">
+						</until-successful>
+				</parallel-foreach>
+				</foreach>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="3cdbc8dd-4aea-4d46-b39a-54a5f0c03a6f">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-payload]]></ee:set-payload>
+{"message":"batch post complete"}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" message="post:\batch\import:application\json:campaign-process-api-config" />
+		<logger level="INFO" doc:name="Logger" doc:id="30be619c-eedb-4277-b091-876e2f6e76cb" message="batch post complete"/>
     </flow>
 </mule>
